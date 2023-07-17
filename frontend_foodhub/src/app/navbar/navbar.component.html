@@ -1,0 +1,11 @@
+<nav>
+  <div class="nav-btns">
+    <ng-container *ngIf="!isLoggedIn; else loggedIn">
+      <button routerLink="/admin" routerLinkActive="active">Admin</button>
+      <button routerLink="/user" routerLinkActive="active">User</button>
+    </ng-container>
+    <ng-template #loggedIn>
+      <button class="logoutbtn" (click)="logout()">Logout</button>
+    </ng-template>
+  </div>
+</nav>

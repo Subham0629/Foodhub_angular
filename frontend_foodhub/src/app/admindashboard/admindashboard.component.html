@@ -1,0 +1,101 @@
+<div class="container">
+  <h1>Admin Dashboard</h1>
+  <div class="button-container">
+    <button (click)="getMenu()">Get Menu</button>
+    <button (click)="showAddDishForm = true">Add Dish</button>
+    <button (click)="reviewOrders()">Review Orders</button>
+  </div>
+
+  
+  <div *ngIf="orders && orders.length > 0 && showOrderTable && !showAddDishForm  ">
+    <h2>Orders</h2>
+    <table class="order-table">
+      <thead>
+        <tr>
+          <th>Customer Name</th>
+          <th>Dish Names</th>
+          <th>Status</th>
+          <th>Change Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let order of orders">
+          <td>{{ order.customer_name }}</td>
+          <td>
+            <ng-container *ngIf="order.dish_ids && order.dish_ids.length > 0; else noDish">
+              <ul>
+                <li *ngFor="let dishId of order.dish_ids">
+                  {{ getDishName(dishId) }}
+                </li>
+              </ul>
+            </ng-container>
+            <ng-template #noDish>
+              No dishes
+            </ng-template>
+          </td>
+          <td>{{order.status}}</td>
+          <td>
+            <select [(ngModel)]="order.status" (change)="updateOrderStatus(order)">
+              <option value="received">Received</option>
+              <option value="preparing">Preparing</option>
+              <option value="ready for pickup">Ready to Pickup</option>
+              <option value="delivered">Delivered</option>
+            </select>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+
+  <div *ngIf="showAddDishForm">
+    <h2>Add Dish</h2>
+    <form (submit)="addDish()" class="add-dish-form">
+      <label for="dishName">Dish Name:</label>
+      <input type="text" id="dishName" [(ngModel)]="newDish.dish_name" name="dishName" required>
+  
+      <label for="price">Price:</label>
+      <input type="number" id="price" [(ngModel)]="newDish.price" name="price" required>
+  
+      <label for="availability">Availability:</label>
+      <select id="availability" [(ngModel)]="newDish.availability" name="availability">
+        <option value="true">Available</option>
+        <option value="false">Not available</option>
+      </select>
+  
+      <button type="submit">Add</button>
+      <button type="button" (click)="cancelAddDish()">Cancel</button>
+    </form>
+  </div>
+  
+
+  <div *ngIf="showMenuTable && !showAddDishForm">
+    <h2>Menu</h2>
+    <table class="menu-table">
+      <thead>
+        <tr>
+          <th>Dish Name</th>
+          <th>Price</th>
+          <th>Availability</th>
+          <th>Rating</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let dish of menuData">
+          <td>{{ dish.dish_name }}</td>
+          <td>{{ dish.price }}</td>
+          <td>{{ dish.availability ? 'Available' : 'Not available' }}</td>
+          <td>{{ calculateAverageRating(dish.rating) }}</td>
+          <td>
+            <button (click)="updateAvailability(dish.dish_id)" class="availability-button">Toggle Availability</button>
+          </td>
+          <td>
+            <button (click)="removeDish(dish.dish_id)" class="delete-button">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
